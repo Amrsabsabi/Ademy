@@ -1,9 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useContext, useEffect, useRef, useState } from 'react'
 import uniqid from 'uniqid'
 import Quill from 'quill'
 import { assets } from '../../assets/assets'
+import { AppContext } from '../../context/AppContext'
+import { toast } from 'react-toastify'
+import axios from 'axios'
 
 const AddCourse = () => {
+
+  const { backendUrl, getToken } = useContext(AppContext)
   const quillRef = useRef(null)
   const editorRef = useRef(null)
 
@@ -81,7 +86,40 @@ const AddCourse = () => {
   };
 
   const handleSubmit = async(e)=>{
-    e.preventDefault()
+    try {
+      e.preventDefault()
+      if(!image){
+        toast.error('Thumbnail Not Selected')
+      }
+      const courseData = {
+        courseTitle,
+        courseDescription: quillRef.current.root.innerHTML,
+        coursePrice: Number(coursePrice),
+        discount: Number(discount),
+        courseContent: chapters,
+      }
+      const formData = new FormData()
+      formData.append('courseData', JSON.stringify(courseData))
+      formData.append('image', image)
+
+      const token = await getToken()
+      const { data } = await axios.post(backendUrl + '/api/educator/add-course',formData, {headers: {Authorization: `Bearer ${token}`}})
+
+      if(data.success){
+        toast.success(data.message)
+        setCourseTitle('')
+        setCoursePrice(0)
+        setDiscount(0)
+        setImage(null)
+        setChapters([])
+        quillRef.current.root.innerHTML = ""
+      }else{
+        toast.error(data.message)
+      }
+    } catch (error) {
+      toast.error(error.message)
+    }
+
   };
 
   useEffect(() => {
@@ -126,7 +164,7 @@ const AddCourse = () => {
               <img src={assets.file_upload_icon} alt="" className='p-3 bg-blue-500 rounded' />
               <input type="file" id='thumbnailImage'
                 onChange={e => setImage(e.target.files[0])} accept="image/*" hidden />
-              <img src={image ? URL.createObjectUrl(image) : ""} alt="" />
+              <img src={image ? URL.createObjectURL(image) : ""} alt="" />
             </label>
           </div>
         </div>
@@ -229,3 +267,4 @@ const AddCourse = () => {
 }
 
 export default AddCourse
+

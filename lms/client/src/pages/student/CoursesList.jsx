@@ -26,7 +26,7 @@ const CoursesList = () => {
 
         
       }
-  },[ allCourses, input ])
+  },[ allCourses, input])
 
   return (
     <>

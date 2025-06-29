@@ -13,6 +13,7 @@ export const clerkWebhooks = async (req, res)=> {
             "svix-timestamp": req.headers["svix-timestamp"],
             "svix-signature": req.headers["svix-signature"]
         })
+
         const {data,type} = req.body
         switch (type) {
             case 'user.created':{
@@ -48,9 +49,7 @@ export const clerkWebhooks = async (req, res)=> {
         res.json({success: false, message: error.message})
     }
 }
-const stripeInstance = new Stripe(process.env.STRIPE_WEBHOOK_SECRET
-
-)
+const stripeInstance = new Stripe(process.env.STRIPE_WEBHOOK_SECRET)
 
 export const stripeWebhooks = async(request,response)=>{
     const sig = request.headers['stripe-signature'];
