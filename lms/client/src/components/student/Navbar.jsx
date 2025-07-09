@@ -7,15 +7,10 @@ import axios from 'axios'
 import { toast } from 'react-toastify'
 
 const Navbar = () => {
-
     const { navigate, isEducator, backendUrl, setIsEducator, getToken } = useContext(AppContext)
-
     const isCourseListPage = location.pathname.includes('/course-list')
-
     const { openSignIn } = useClerk()
     const { user } = useUser()
-
-
     const becomeEducator = async () => {
         try {
             if (isEducator) {
@@ -31,10 +26,7 @@ const Navbar = () => {
                 toast.error(data.message)
             }
         } catch (error) {
-            toast.error(error.message)
-        }
-    }
-
+            toast.error(error.message)}}
     return (
         <div className={`flex items-center justify-between px-4 sm:px-10 md:px-14 
     lg:px-36 border-b border-gray-500 py-4  ${isCourseListPage ? 'bg-white' : 'bg-cyan-100/70'}`}>
@@ -72,5 +64,4 @@ const Navbar = () => {
         </div>
     )
 }
-
 export default Navbar
